@@ -33,8 +33,8 @@ def draw_arrow(surface: Surface,
 
     orthogonal = np.array([-v2, v1])
 
-    left_end = end + (vec + orthogonal) * 0.25 * c.C2P
-    right_end = end + (vec - orthogonal) * 0.25 * c.C2P
+    left_end = (end + (vec + orthogonal) * 0.25 * c.C2P).astype(int)
+    right_end = (end + (vec - orthogonal) * 0.25 * c.C2P).astype(int)
 
     pygame.draw.line(surface, color, start.tolist(), end.tolist(), width=width)
     pygame.draw.line(surface, color, left_end.tolist(), end.tolist(), width=width)
@@ -62,12 +62,18 @@ def draw_world(world: World, surface: Surface):
                 color = [1, 1 - value, 1 - value]
             elif world.home[i, j]:
                 color = [1, 1, 1]
-            elif (food_pheromone := world.food_pheromone[i, j]) > 0:
-                value = food_pheromone / c.PHEROMONE_SCALE
-                color = [1 - value, 1 - value, 1]
-            elif (home_pheromone := world.home_pheromone[i, j]) > 0:
-                value = home_pheromone / c.PHEROMONE_SCALE
-                color = [1 - value, 1, 1 - value]
+            elif (world.food_pheromone[i, j] > 0) or (world.home_pheromone[i, j]) > 0:
+                home_pheromone = world.home_pheromone[i, j]
+                food_pheromone = world.food_pheromone[i, j]
+                food = food_pheromone / c.PHEROMONE_SCALE
+                home = home_pheromone / c.PHEROMONE_SCALE
+                color = [1 - (food+home)/2, 1 - (food/2), 1 - (home/2)]
+            # elif (food_pheromone := world.food_pheromone[i, j]) > 0:
+            #     value = food_pheromone / c.PHEROMONE_SCALE
+            #     color = [1 - value, 1 - value, 1]
+            # elif (home_pheromone := world.home_pheromone[i, j]) > 0:
+            #     value = home_pheromone / c.PHEROMONE_SCALE
+            #     color = [1 - value, 1, 1 - value]
             else:
                 color = [1, 1, 1]
 

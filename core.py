@@ -48,7 +48,7 @@ class Ant:
             # looking for home
             if obs.here.home:
                 return Action.DROP
-            elif obs.ahead.home and not obs.ahead.ant:
+            elif obs.ahead.home:# and not obs.ahead.ant:
                 return Action.MOVE
             else:
                 return self.follow_trail(obs, home=True)
@@ -56,7 +56,7 @@ class Ant:
             # looking for food
             if obs.here.food and not obs.here.home:
                 return Action.TAKE
-            elif obs.ahead.food and not obs.ahead.ant and not obs.ahead.home:
+            elif obs.ahead.food and not obs.ahead.home:# and not obs.ahead.ant
                 return Action.MOVE
             else:
                 return self.follow_trail(obs, home=False)
@@ -70,7 +70,8 @@ class Ant:
         best_idx = int(np.argmax(ranking))
         ranking[best_idx] *= 3  # TODO: magic number
 
-        ignore = 0 if obs.ahead.ant else None
+        # ignore = 0 if obs.ahead.ant else None
+        ignore = None
         probs = normalize(ranking, ignore)
 
         choice = np.random.choice(range(len(probs)), p=probs)
@@ -128,7 +129,6 @@ class World:
 
         self.setup()
 
-    # TODO: remove collisions
     def step(self):
         for ant in self.ants:
             obs = Observation(self, ant)
